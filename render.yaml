@@ -1,9 +1,10 @@
 services:
   - type: web
-    name: lost-and-found-mern
+    name: lost-and-found-backend
     env: node
-    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
-    startCommand: npm start --prefix backend
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -13,3 +14,16 @@ services:
         generateValue: true
       - key: MONGO_URI
         sync: false
+
+  - type: web
+    name: lost-and-found-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: lost-and-found-backend
+          envVarKey: RENDER_EXTERNAL_URL
